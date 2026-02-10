@@ -1,0 +1,155 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red193\green193\blue193;\red24\green24\blue24;\red70\green137\blue204;
+\red212\green214\blue154;\red140\green211\blue254;\red194\green126\blue101;\red89\green138\blue67;\red202\green202\blue202;
+\red167\green197\blue152;\red205\green173\blue106;\red24\green24\blue24;\red140\green211\blue254;\red194\green126\blue101;
+\red167\green197\blue152;\red212\green214\blue154;}
+{\*\expandedcolortbl;;\cssrgb\c80000\c80000\c80000;\cssrgb\c12157\c12157\c12157;\cssrgb\c33725\c61176\c83922;
+\cssrgb\c86275\c86275\c66667;\cssrgb\c61176\c86275\c99608;\cssrgb\c80784\c56863\c47059;\cssrgb\c41569\c60000\c33333;\cssrgb\c83137\c83137\c83137;
+\cssrgb\c70980\c80784\c65882;\cssrgb\c84314\c72941\c49020;\cssrgb\c12157\c12157\c12157;\cssrgb\c61176\c86275\c99608;\cssrgb\c80784\c56863\c47059;
+\cssrgb\c70980\c80784\c65882;\cssrgb\c86275\c86275\c66667;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 IDEAS:\
+- smiley face (images, emojis)\
+- warm colors\
+- Inside Out Joy\
+- Sun\
+- children playing in the playground\
+- childhood memories\
+- video games\
+- graduating\
+- cup that\'92s happy\
+- GIF (memes about joy)\
+\
+- Rainbow\
+- Sun\
+- Images\
+\
+\
+==============================\
+\
+Function A:\
+- mouseclick (20 IMAGES)\
+\
+Function B:\
+- mouseover (RAINBOW)\
+\
+Function C:\
+- key up/down (SUN)\
+\
+Function D:\
+- requestAnimation (SMILEY FACE) sig, css transform\
+\
+====\
+====\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f1 \cf2 \cb3 \expnd0\expndtw0\kerning0
+  \cf4 function\cf2  \cf5 aniD\cf2 (\cf6 parentCanvas\cf2 ) \{\cb1 \
+\cb3     \cf6 console\cf2 .\cf5 log\cf2 (\cf7 "in ani-D -teamF"\cf2 );\cb1 \
+\
+\cb3     \cf8 // keep inside canvas\cf2 \cb1 \
+\cb3     \cf6 parentCanvas\cf2 .\cf6 style\cf2 .\cf6 position\cf2  \cf9 =\cf2  \cf7 "relative"\cf2 ;\cb1 \
+\cb3     \cf6 parentCanvas\cf2 .\cf6 style\cf2 .\cf6 overflow\cf2  \cf9 =\cf2  \cf7 "hidden"\cf2 ;\cb1 \
+\
+\cb3     \cf8 // create face\cf2 \cb1 \
+\cb3     \cf4 let\cf2  \cf6 face\cf2  \cf9 =\cf2  \cf6 document\cf2 .\cf5 createElement\cf2 (\cf7 "div"\cf2 );\cb1 \
+\cb3     \cf6 face\cf2 .\cf6 classList\cf2 .\cf5 add\cf2 (\cf7 "TEAM_F_face"\cf2 );\cb1 \
+\cb3     \cf6 parentCanvas\cf2 .\cf5 appendChild\cf2 (\cf6 face\cf2 );\cb1 \
+\
+\cb3     \cf8 // create eyes\cf2 \cb1 \
+\cb3     \cf4 let\cf2  \cf6 leftEye\cf2  \cf9 =\cf2  \cf6 document\cf2 .\cf5 createElement\cf2 (\cf7 "div"\cf2 );\cb1 \
+\cb3     \cf6 leftEye\cf2 .\cf6 classList\cf2 .\cf5 add\cf2 (\cf7 "TEAM_F_eye"\cf2 , \cf7 "TEAM_F_eyeLeft"\cf2 );\cb1 \
+\cb3     \cf6 face\cf2 .\cf5 appendChild\cf2 (\cf6 leftEye\cf2 );\cb1 \
+\
+\cb3     \cf4 let\cf2  \cf6 rightEye\cf2  \cf9 =\cf2  \cf6 document\cf2 .\cf5 createElement\cf2 (\cf7 "div"\cf2 );\cb1 \
+\cb3     \cf6 rightEye\cf2 .\cf6 classList\cf2 .\cf5 add\cf2 (\cf7 "TEAM_F_eye"\cf2 , \cf7 "TEAM_F_eyeRight"\cf2 );\cb1 \
+\cb3     \cf6 face\cf2 .\cf5 appendChild\cf2 (\cf6 rightEye\cf2 );\cb1 \
+\
+\cb3     \cf8 // create mouth (from image)\cf2 \cb1 \
+\cb3     \cf4 let\cf2  \cf6 mouth\cf2  \cf9 =\cf2  \cf6 document\cf2 .\cf5 createElement\cf2 (\cf7 "img"\cf2 );\cb1 \
+\cb3     \cf6 mouth\cf2 .\cf6 src\cf2  \cf9 =\cf2  \cf7 "assets/images/F_mouth.png"\cf2 ;\cb1 \
+\cb3     \cf6 mouth\cf2 .\cf6 classList\cf2 .\cf5 add\cf2 (\cf7 "TEAM_F_mouth"\cf2 );\cb1 \
+\cb3     \cf6 face\cf2 .\cf5 appendChild\cf2 (\cf6 mouth\cf2 );\cb1 \
+\
+\cb3     \cf8 // animate\cf2 \cb1 \
+\cb3     \cf4 let\cf2  \cf6 timer\cf2  \cf9 =\cf2  \cf10 0\cf2 ; \cf8 // our own time counter\cf2 \cb1 \
+\
+\cb3     \cf4 function\cf2  \cf5 animate\cf2 () \{\cb1 \
+\cb3       \cf6 timer\cf2  \cf9 +=\cf2  \cf10 0.02\cf2 ;\cb1 \
+\
+\cb3       \cf8 // scaleY go -1 to 1 and back and so on...\cf2 \cb1 \
+\cb3       \cf4 let\cf2  \cf6 scaleY\cf2  \cf9 =\cf2  \cf6 Math\cf2 .\cf5 sin\cf2 (\cf6 timer\cf2 );\cb1 \
+\
+\cb3       \cf8 // flip mouth\cf2 \cb1 \
+\cb3       \cf6 mouth\cf2 .\cf6 style\cf2 .\cf6 transform\cf2  \cf9 =\cf2  \cf7 `translateX(-50%) scaleY(\cf4 $\{\cf6 scaleY\cf4 \}\cf7 )`\cf2 ;\cb1 \
+\
+\cb3       \cf8 // happiness value\cf2 \cb1 \
+\cb3       \cf4 let\cf2  \cf6 happiness\cf2  \cf9 =\cf2  \cf10 1\cf2  \cf9 -\cf2  (\cf6 scaleY\cf2  \cf9 +\cf2  \cf10 1\cf2 ) \cf9 /\cf2  \cf10 2\cf2 ;\cb1 \
+\
+\cb3       \cf8 // dull yellow -> vibrant yellow\cf2 \cb1 \
+\cb3       \cf4 let\cf2  \cf6 r\cf2  \cf9 =\cf2  \cf6 Math\cf2 .\cf5 floor\cf2 (\cf10 180\cf2  \cf9 +\cf2  \cf10 75\cf2  \cf9 *\cf2  \cf6 happiness\cf2 );\cb1 \
+\cb3       \cf4 let\cf2  \cf6 g\cf2  \cf9 =\cf2  \cf6 Math\cf2 .\cf5 floor\cf2 (\cf10 160\cf2  \cf9 +\cf2  \cf10 95\cf2  \cf9 *\cf2  \cf6 happiness\cf2 );\cb1 \
+\cb3       \cf4 let\cf2  \cf6 b\cf2  \cf9 =\cf2  \cf6 Math\cf2 .\cf5 floor\cf2 (\cf10 20\cf2  \cf9 *\cf2  (\cf10 1\cf2  \cf9 -\cf2  \cf6 happiness\cf2 ));\cb1 \
+\
+\cb3       \cf6 face\cf2 .\cf6 style\cf2 .\cf6 backgroundColor\cf2  \cf9 =\cf2  \cf7 `rgb(\cf4 $\{\cf6 r\cf4 \}\cf7 , \cf4 $\{\cf6 g\cf4 \}\cf7 , \cf4 $\{\cf6 b\cf4 \}\cf7 )`\cf2 ;\cb1 \
+\
+\cb3       \cf5 requestAnimationFrame\cf2 (\cf5 animate\cf2 );\cb1 \
+\cb3     \}\cb1 \
+\cb3     \cf5 requestAnimationFrame\cf2 (\cf5 animate\cf2 );\cb1 \
+\cb3   \}\cb1 \
+\
+\
+==== css\
+\
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb12 \outl0\strokewidth0 \strokec11 .TEAM_F_face\cf2 \strokec2  \{\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb12   \cf13 \strokec13 position\cf2 \strokec2 : \cf14 \strokec14 absolute\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 width\cf2 \strokec2 : \cf15 \strokec15 220px\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 height\cf2 \strokec2 : \cf15 \strokec15 220px\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 left\cf2 \strokec2 : \cf15 \strokec15 50%\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 top\cf2 \strokec2 : \cf15 \strokec15 50%\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 transform\cf2 \strokec2 : \cf16 \strokec16 translate\cf2 \strokec2 (\cf15 \strokec15 -50%\cf2 \strokec2 , \cf15 \strokec15 -50%\cf2 \strokec2 );\cb1 \
+\cb12   \cf13 \strokec13 border-radius\cf2 \strokec2 : \cf15 \strokec15 50%\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 background\cf2 \strokec2 : \cf16 \strokec16 rgb\cf2 \strokec2 (\cf15 \strokec15 170\cf2 \strokec2 , \cf15 \strokec15 170\cf2 \strokec2 , \cf15 \strokec15 0\cf2 \strokec2 );\cb1 \
+\cb12   \cf13 \strokec13 border\cf2 \strokec2 : \cf15 \strokec15 4px\cf2 \strokec2  \cf14 \strokec14 solid\cf2 \strokec2  \cf14 \strokec14 black\cf2 \strokec2 ;\cb1 \
+\cb12 \}\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb12 \strokec11 .TEAM_F_eye\cf2 \strokec2  \{\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb12   \cf13 \strokec13 position\cf2 \strokec2 : \cf14 \strokec14 absolute\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 width\cf2 \strokec2 : \cf15 \strokec15 22px\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 height\cf2 \strokec2 : \cf15 \strokec15 22px\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 border-radius\cf2 \strokec2 : \cf15 \strokec15 50%\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 background\cf2 \strokec2 : \cf14 \strokec14 black\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 top\cf2 \strokec2 : \cf15 \strokec15 70px\cf2 \strokec2 ;\cb1 \
+\cb12 \}\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb12 \strokec11 .TEAM_F_eyeLeft\cf2 \strokec2  \{\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb12   \cf13 \strokec13 left\cf2 \strokec2 : \cf15 \strokec15 70px\cf2 \strokec2 ;\cb1 \
+\cb12 \}\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb12 \strokec11 .TEAM_F_eyeRight\cf2 \strokec2  \{\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb12   \cf13 \strokec13 right\cf2 \strokec2 : \cf15 \strokec15 70px\cf2 \strokec2 ;\cb1 \
+\cb12 \}\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb12 \strokec11 .TEAM_F_mouth\cf2 \strokec2  \{\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb12   \cf13 \strokec13 position\cf2 \strokec2 : \cf14 \strokec14 absolute\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 left\cf2 \strokec2 : \cf15 \strokec15 50%\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 top\cf2 \strokec2 : \cf15 \strokec15 130px\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 width\cf2 \strokec2 : \cf15 \strokec15 120px\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 height\cf2 \strokec2 : \cf14 \strokec14 auto\cf2 \strokec2 ;\cb1 \
+\cb12   \cf13 \strokec13 transform-origin\cf2 \strokec2 : \cf14 \strokec14 center\cf2 \strokec2 ;\cb1 \
+\cb12 \}\cb1 \
+}
