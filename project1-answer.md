@@ -41,7 +41,7 @@ function registerParts() {
 
 Another work i have found compelling is the 'worm fishing survival game' (https://benmsky.github.io/CART263-main/CART263-main/project1/) by Benjamin Mackinovsky where i like the idea of creating a shooting game out of fish and bubbles using a simple code that works, simply following the movements of the mouse as we can see in that part of the code, where mouse tracking is used to direct the projectiles : 
 
-{
+
 // Mouse Tracking
 canvas.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 canvas.addEventListener('click', () => { if (!isGameOver && !wavePaused) shootProjectile(); });
