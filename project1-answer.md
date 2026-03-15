@@ -39,8 +39,9 @@ function registerParts() {
     
     
 
-Another work i have found compelling is the 'worm fishing survival game' (https://benmsky.github.io/CART263-main/CART263-main/project1/) by Benjamin Mackinovsky where i like the idea of creating a shooting game out of fish and bubbles using a simple code that works, simply following the movements of the mouse as we can see in that part of the code : 
+Another work i have found compelling is the 'worm fishing survival game' (https://benmsky.github.io/CART263-main/CART263-main/project1/) by Benjamin Mackinovsky where i like the idea of creating a shooting game out of fish and bubbles using a simple code that works, simply following the movements of the mouse as we can see in that part of the code, where mouse tracking is used to direct the projectiles : 
 
+{
 // Mouse Tracking
 canvas.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 canvas.addEventListener('click', () => { if (!isGameOver && !wavePaused) shootProjectile(); });
@@ -50,9 +51,10 @@ function shootProjectile() {
   const headX = player.x;
   const headY = player.y + Math.sin(player.wiggleOffset) * 10;
   const baseAngle = Math.atan2(mouse.y - headY, mouse.x - headX);
+}
   
 
-There, i was interested in the concept of creating levels, called 'waves', the game gradually getting harder as the waves arise. The legend created on the top left side of the screen is also a good idea and helps the player undertand even more easily the game.
+In this game, I was also interested in the concept of creating levels, called 'waves', the game gradually getting harder as the waves arise. The legend created on the top left side of the screen is also a good idea and helps the player undertand even more easily the game.
 
 This is something that I noticed and valued because after trying different other games created among the list of github links, I have that some games had a concept kind of abstract or hard to undertand at first, but the thing is that these games didn't have a legend either. In some cases i would just not get it, so the fun disappears, even if the interactivity had good artistic purposes and ideas. Now i can also reflect in my group's game where i feel like creating a legend could have been a good idea.
   
