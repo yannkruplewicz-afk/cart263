@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CART 263: ALL STUFF INSIDE THE CANVAS</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            display: inline-block;
+            margin: 10px;
+        }
+
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .button-g {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>CART 263: ALL STUFF INSIDE CANVAS(ES)</h1>
+
+    <main>
+        <div class="container">
+            <div class="button-g"></div>
+            <canvas class="canvases" width="400" height="300" id="partA"></canvas>
+        </div>
+        <div class="container">
+            <div class="button-g"></div>
+            <canvas class="canvases" width="400" height="300" id="partB"></canvas>
+        </div>
+        <div class="container">
+            <div class="button-g"></div>
+            <canvas class="canvases" width="400" height="300" id="partC"></canvas>
+        </div>
+        <div class="container">
+            <div class="button-g">
+                <span id="filter_button_blur">
+                    <span> blur</span>
+                    <input id="blurnum" type="number" min="0" max="8" />
+                </span>
+                <span id="filter_button_sepia">
+                    <span> sepia</span>
+                    <input id="sepianum" type="number" min="0" max="0" />
+                </span>
+                <span id="filter_button_hue">
+                    <span> hue-rotate</span>
+                    <input id="huenum" type="number" min="0" max="360" />
+                </span>
+                <span id="filter_button_invert">
+                    <span> invert</span>
+                    <input id="invertnum" type="number" min="0" max="0" />
+                </span>
+            </div>
+            <canvas class="canvases" width="400" height="300" id="partD"></canvas>
+        </div>
+    </main>
+
+    <script>
+        // =========================
+        // Global Variables
+        // =========================
+        const canvas = document.getElementById("partA"); // use first canvas for circles
+        const context = canvas.getContext("2d");
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        canvas.addEventListener("mousemove", (e) => {
+            mouseX = e.offsetX;
+            mouseY = e.offsetY;
+        });
+
+        let circles = [];
+
+        // =========================
+        // CircularObj Class
+        // =========================
+        class CircularObj {
+            constructor(x, y, radius, f_color, s_color, context) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.fill_color = f_color;
+                this.stroke_color = s_color;
+                this.startAngle = 0;
+                this.endAngle = Math.PI * 2;
+                this.context = context;
+
+                this.dx = Math.random() * 2 - 1;
+                this.dy = Math.random() * 2 - 1;
+                this.growth = 0.2;
+                this.maxRadius = radius + 10;
+                this.minRadius = radius - 5;
+            }
+
+            display() {
+                this.context.beginPath();
+                this.context.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle);
+                this.context.fillStyle = this.fill_color;
+                this.context.fill();
+                this.context.lineWidth = 2;
+                this.context.strokeStyle = this.stroke_color;
+                this.context.stroke();
+                this.context.closePath();
+            }
+
+            update() {
+                this.x += this.dx + (mouseX - this.x) * 0.02;
+                this.y += this.dy + (mouseY - this.y) * 0.02;
+
+                this.radius += this.growth;
+                if (this.radius > this.maxRadius || this.radius < this.minRadius) {
+                    this.growth *= -1;
+                }
+            }
+        }
+
+        // =========================
+        // Add/Remove Circles
+        // =========================
+        canvas.addEventListener("click", () => {
+            let radius = Math.random() * 20 + 10;
+            circles.push(new CircularObj(
+                mouseX,
+                mouseY,
+                radius,
+                `hsl(${Math.random() * 360}, 70%, 60%)`,
+                "black",
+                context
+            ));
+        });
+
+        canvas.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+            circles.pop();
+        });
+
+        // =========================
+        // Animation Loop
+        // =========================
+        function animate() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            for (let circle of circles) {
+                circle.update();
+                circle.display();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // =========================
+        // Resize Canvas
+        // =========================
+        window.addEventListener("resize", () => {
+            canvas.width = 400; // keep original size
+            canvas.height = 300;
+        });
+    </script>
+</body>
+
+</html>
