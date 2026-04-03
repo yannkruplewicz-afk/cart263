@@ -1,0 +1,11 @@
+Model Information:
+* title:	Baby duck
+* source:	https://sketchfab.com/3d-models/baby-duck-4fb50bede4db49ef8a00037e59b6425d
+* author:	Thi3d (https://sketchfab.com/Thiagop1)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Baby duck" (https://sketchfab.com/3d-models/baby-duck-4fb50bede4db49ef8a00037e59b6425d) by Thi3d (https://sketchfab.com/Thiagop1) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
