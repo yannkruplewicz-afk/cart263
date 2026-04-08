@@ -1,0 +1,86 @@
+{
+  "colors": [
+    {
+      "id": "white",
+      "label": "white"
+    },
+    {
+      "id": "red",
+      "label": "red"
+    },
+    {
+      "id": "green",
+      "label": "green"
+    },
+    {
+      "id": "blue",
+      "label": "blue"
+    },
+    {
+      "id": "black",
+      "label": "black"
+    }
+  ],
+  "robotTypes": [
+    {
+      "id": "companion",
+      "label": "companion robot",
+      "appearanceHint": "humanoid, friendly, rounded",
+      "imagePaths": {
+        "white": "assets/images/robots/companion-white.png",
+        "red": "assets/images/robots/companion-red.png",
+        "green": "assets/images/robots/companion-green.png",
+        "blue": "assets/images/robots/companion-blue.png",
+        "black": "assets/images/robots/companion-black.png"
+      }
+    },
+    {
+      "id": "domestic",
+      "label": "domestic robot",
+      "appearanceHint": "home helper, clean, compact",
+      "imagePaths": {
+        "white": "assets/images/robots/domestic-white.png",
+        "red": "assets/images/robots/domestic-red.png",
+        "green": "assets/images/robots/domestic-green.png",
+        "blue": "assets/images/robots/domestic-blue.png",
+        "black": "assets/images/robots/domestic-black.png"
+      }
+    },
+    {
+      "id": "security",
+      "label": "security robot",
+      "appearanceHint": "tougher, sensor-heavy, protective",
+      "imagePaths": {
+        "white": "assets/images/robots/security-white.png",
+        "red": "assets/images/robots/security-red.png",
+        "green": "assets/images/robots/security-green.png",
+        "blue": "assets/images/robots/security-blue.png",
+        "black": "assets/images/robots/security-black.png"
+      }
+    },
+    {
+      "id": "social",
+      "label": "social robot",
+      "appearanceHint": "expressive, sleek, approachable",
+      "imagePaths": {
+        "white": "assets/images/robots/social-white.png",
+        "red": "assets/images/robots/social-red.png",
+        "green": "assets/images/robots/social-green.png",
+        "blue": "assets/images/robots/social-blue.png",
+        "black": "assets/images/robots/social-black.png"
+      }
+    },
+    {
+      "id": "utility",
+      "label": "utility robot",
+      "appearanceHint": "practical, mechanical, tool-based",
+      "imagePaths": {
+        "white": "assets/images/robots/utility-white.png",
+        "red": "assets/images/robots/utility-red.png",
+        "green": "assets/images/robots/utility-green.png",
+        "blue": "assets/images/robots/utility-blue.png",
+        "black": "assets/images/robots/utility-black.png"
+      }
+    }
+  ]
+}
