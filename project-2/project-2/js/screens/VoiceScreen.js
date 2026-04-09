@@ -1,323 +1,374 @@
 /*
  * VoiceScreen.js
- * Manages the voice recording, preview, and processing for RobotShopApp
+ * Handles voice recording, preview, and audio processing for RobotShopApp.
+ * Sits between the question flow and the reveal screen.
  */
 
 "use strict";
 
 class VoiceScreen extends Screen {
+
   constructor(app) {
     super(app);
 
-    this.voicePanelX = 100;
-    this.voicePanelY = 70;
-    this.voicePanelWidth = 760;
-    this.voicePanelHeight = 400;
+    // Panel layout
+    this.panelX = 100;
+    this.panelY = 70;
+    this.panelW = 760;
+    this.panelH = 400;
 
-    this.buttonWidth = 220;
-    this.buttonHeight = 50;
-    this.buttonSpacing = 18;
+    // Button layout
+    this.btnW = 220;
+    this.btnH = 50;
+    this.btnGap = 18;
 
+    // UI state
     this.visibleButtons = [];
-    this.voiceStatusMessage = "record a short voice sample for your robot";
-    this.statusMessageOverride = null;
+    this.statusMessage = "record a short voice sample for your robot";
+    this.statusOverride = null;
 
+    // Recording state
     this.mediaRecorder = null;
     this.mediaStream = null;
-    this.recordedAudioChunks = [];
+    this.audioChunks = [];
     this.recordingTimeoutId = null;
     this.recordingStartTime = 0;
     this.isRecording = false;
 
-    this.previewAudioElement = null;
-    this.processingAudioContext = null;
+    // Playback / processing
+    this.previewAudio = null;
+    this.audioContext = null;
   }
 
-  /* --------------------------------------------
+  /* ─────────────────────────────────────────────
    * SCREEN LIFECYCLE
-   * -------------------------------------------- */
+   * ───────────────────────────────────────────── */
 
   enter() {
     this.stopPreviewAudio();
-    this.refreshVoiceScreen();
+    this.refresh();
   }
 
   update() {
-    this.refreshVoiceScreen();
+    this.refresh();
   }
 
   display() {
     this.displayBackground();
     this.displayFrame();
-    this.displayVoicePanel();
-    this.displayTitleText();
-    this.displayInstructionText();
+    this.displayPanel();
+    this.displayTitle();
+    this.displayInstructions();
     this.displayRobotSummary();
-    this.displayRecordingTimer();
-    this.displayButtonRow();
-    this.displayVoiceStatusText();
+    this.displayTimerBar();
+    this.displayButtons();
+    this.displayStatusText();
   }
 
   mousePressed() {
-    const clickedButton = this.findClickedButton();
-    if (!clickedButton) return;
-    this.handleButtonClick(clickedButton.buttonId);
+    const btn = this.getClickedButton();
+    if (btn) this.handleButtonClick(btn.id);
   }
 
-  /* --------------------------------------------
-   * UI BUILD & DISPLAY
-   * -------------------------------------------- */
+  /* ─────────────────────────────────────────────
+   * STATE REFRESH
+   * ───────────────────────────────────────────── */
 
-  refreshVoiceScreen() {
-    this.buildVisibleButtons();
-
-    // Update voiceStatusMessage dynamically
-    if (this.statusMessageOverride) {
-      this.voiceStatusMessage = this.statusMessageOverride;
-    } else if (this.isRecording) {
-      this.voiceStatusMessage = "recording in progress...";
-    } else if (this.app.projectData.audioStatus.hasRecording) {
-      this.voiceStatusMessage = "your recording is ready for preview or confirmation";
-    } else {
-      this.voiceStatusMessage = "record a short voice sample for your robot";
-    }
+  refresh() {
+    this.buildButtons();
+    this.updateStatusMessage();
   }
 
-  buildVisibleButtons() {
-    this.visibleButtons = [];
-    const audioStatus = this.app.projectData.audioStatus;
-    const buttonStartX = this.voicePanelX + 40;
-    const buttonY = this.voicePanelY + 320;
-
-    if (!audioStatus.hasRecording) {
-      this.visibleButtons.push({
-        buttonId: "record",
-        label: this.getRecordButtonLabel(),
-        x: buttonStartX,
-        y: buttonY,
-        width: this.buttonWidth,
-        height: this.buttonHeight
-      });
+  updateStatusMessage() {
+    if (this.statusOverride) {
+      this.statusMessage = this.statusOverride;
       return;
     }
 
-    this.visibleButtons.push({ buttonId: "preview", label: "preview", x: buttonStartX, y: buttonY, width: this.buttonWidth, height: this.buttonHeight });
-    this.visibleButtons.push({ buttonId: "recordAgain", label: "record again", x: buttonStartX + this.buttonWidth + this.buttonSpacing, y: buttonY, width: this.buttonWidth, height: this.buttonHeight });
-    this.visibleButtons.push({ buttonId: "confirm", label: "confirm", x: buttonStartX + 2 * (this.buttonWidth + this.buttonSpacing), y: buttonY, width: this.buttonWidth, height: this.buttonHeight });
+    if (this.isRecording) {
+      this.statusMessage = "recording in progress...";
+    } else if (this.app.projectData.audioStatus.hasRecording) {
+      this.statusMessage = "your recording is ready — preview it or confirm to continue";
+    } else {
+      this.statusMessage = "record a short voice sample for your robot";
+    }
   }
 
-  displayVoicePanel() {
+  /* ─────────────────────────────────────────────
+   * BUTTON BUILDING
+   * ───────────────────────────────────────────── */
+
+  buildButtons() {
+    this.visibleButtons = [];
+
+    const startX = this.panelX + 40;
+    const btnY = this.panelY + 320;
+    const hasRecording = this.app.projectData.audioStatus.hasRecording;
+
+    if (!hasRecording) {
+      // Only show record / stop record
+      this.visibleButtons.push(this.makeButton("record", this.getRecordLabel(), startX, btnY));
+      return;
+    }
+
+    // Show preview / record again / confirm
+    this.visibleButtons.push(this.makeButton("preview", "preview", startX, btnY));
+    this.visibleButtons.push(this.makeButton("recordAgain", "record again", startX + (this.btnW + this.btnGap), btnY));
+    this.visibleButtons.push(this.makeButton("confirm", "confirm", startX + 2 * (this.btnW + this.btnGap), btnY));
+  }
+
+  makeButton(id, label, x, y) {
+    return { id, label, x, y, w: this.btnW, h: this.btnH };
+  }
+
+  getRecordLabel() {
+    return this.isRecording ? "stop recording" : "start recording";
+  }
+
+  /* ─────────────────────────────────────────────
+   * DISPLAY METHODS
+   * ───────────────────────────────────────────── */
+
+  displayPanel() {
     rectMode(CORNER);
     fill(255);
     stroke(20);
     strokeWeight(2);
-    rect(this.voicePanelX, this.voicePanelY, this.voicePanelWidth, this.voicePanelHeight);
+    rect(this.panelX, this.panelY, this.panelW, this.panelH);
   }
 
-  displayTitleText() {
+  displayTitle() {
     fill(20);
     noStroke();
     textAlign(LEFT, TOP);
     textSize(30);
-    text("give your robot a voice", this.voicePanelX + 30, this.voicePanelY + 30);
+    text("give your robot a voice", this.panelX + 30, this.panelY + 30);
   }
 
-  displayInstructionText() {
+  displayInstructions() {
     fill(20);
     noStroke();
     textAlign(LEFT, TOP);
     textSize(18);
-    text("record up to 5 seconds of your voice", this.voicePanelX + 30, this.voicePanelY + 80);
-    text("preview the raw audio first, then confirm it for the robot filter", this.voicePanelX + 30, this.voicePanelY + 108);
+    text("record up to 5 seconds of your voice", this.panelX + 30, this.panelY + 80);
+    text("preview the raw audio first, then confirm it for robot filter", this.panelX + 30, this.panelY + 108);
   }
 
   displayRobotSummary() {
-    const selectedRobotLabel = this.getSelectedRobotLabel();
-    const selectedColorLabel = this.getSelectedColorLabel();
-
     fill(20);
     noStroke();
     textAlign(LEFT, TOP);
     textSize(20);
-    text(`robot type: ${selectedRobotLabel}`, this.voicePanelX + 30, this.voicePanelY + 155);
-    text(`robot color: ${selectedColorLabel}`, this.voicePanelX + 30, this.voicePanelY + 185);
+    text(`robot type:  ${this.getRobotLabel()}`, this.panelX + 30, this.panelY + 155);
+    text(`robot color: ${this.getColorLabel()}`, this.panelX + 30, this.panelY + 185);
   }
 
-  displayButtonRow() {
+  displayTimerBar() {
+    const maxSec = this.app.projectData.recordingDurationSeconds;
+    const currentSec = this.getVisibleSeconds();
+    const ratio = Math.min(1, currentSec / maxSec);
+
+    const x = this.panelX + 30;
+    const y = this.panelY + 225;
+    const barW = this.panelW - 60;
+    const barH = 18;
+
+    // Label
+    fill(20);
+    noStroke();
+    textAlign(LEFT, TOP);
+    textSize(16);
+    text(`${this.getTimerLabel()}: ${currentSec.toFixed(1)} / ${maxSec.toFixed(1)} seconds`, x, y);
+
+    // Background bar
+    fill(235);
+    stroke(20);
+    strokeWeight(2);
+    rect(x, y + 28, barW, barH);
+
+    // Fill bar
+    if (ratio > 0) {
+      fill(20);
+      noStroke();
+      rect(x, y + 28, barW * ratio, barH);
+    }
+  }
+
+  displayButtons() {
     this.visibleButtons.forEach(btn => {
-      const isHovered = this.isMouseInsideButton(btn);
-      fill(isHovered ? 230 : 245);
+      const hovered = this.isInsideButton(btn);
+
+      fill(hovered ? 220 : 245);
       stroke(20);
       strokeWeight(2);
-      rect(btn.x, btn.y, btn.width, btn.height);
+      rectMode(CORNER);
+      rect(btn.x, btn.y, btn.w, btn.h);
 
       fill(20);
       noStroke();
       textAlign(CENTER, CENTER);
       textSize(18);
-      text(btn.label, btn.x + btn.width / 2, btn.y + btn.height / 2);
+      text(btn.label, btn.x + btn.w / 2, btn.y + btn.h / 2);
     });
   }
 
-  displayRecordingTimer() {
-    const maxSeconds = this.app.projectData.recordingDurationSeconds;
-    const currentSeconds = this.getVisibleRecordingSeconds();
-    const ratio = currentSeconds / maxSeconds;
-
-    const x = this.voicePanelX + 30;
-    const y = this.voicePanelY + 225;
-    const widthBar = this.voicePanelWidth - 60;
-    const heightBar = 18;
-
-    fill(20);
-    noStroke();
-    textAlign(LEFT, TOP);
-    textSize(16);
-    text(`${this.getRecordingTimerLabel()}: ${currentSeconds.toFixed(1)} / ${maxSeconds.toFixed(1)} seconds`, x, y);
-
-    fill(235);
-    stroke(20);
-    strokeWeight(2);
-    rect(x, y + 28, widthBar, heightBar);
-
-    fill(20);
-    noStroke();
-    rect(x, y + 28, widthBar * ratio, heightBar);
-  }
-
-  displayVoiceStatusText() {
+  displayStatusText() {
     fill(20);
     noStroke();
     textAlign(LEFT, TOP);
     textSize(18);
-    text(this.voiceStatusMessage, this.voicePanelX + 30, this.voicePanelY + 280, this.voicePanelWidth - 60);
+    text(this.statusMessage, this.panelX + 30, this.panelY + 280, this.panelW - 60);
   }
 
-  /* --------------------------------------------
-   * BUTTON LOGIC
-   * -------------------------------------------- */
+  /* ─────────────────────────────────────────────
+   * BUTTON INTERACTION
+   * ───────────────────────────────────────────── */
 
-  findClickedButton() {
-    for (const btn of this.visibleButtons) {
-      if (this.isMouseInsideButton(btn)) return btn;
+  getClickedButton() {
+    return this.visibleButtons.find(btn => this.isInsideButton(btn)) || null;
+  }
+
+  isInsideButton(btn) {
+    return mouseX >= btn.x && mouseX <= btn.x + btn.w &&
+      mouseY >= btn.y && mouseY <= btn.y + btn.h;
+  }
+
+  async handleButtonClick(id) {
+    switch (id) {
+      case "record": await this.handleRecord(); break;
+      case "preview": await this.handlePreview(); break;
+      case "recordAgain": this.handleRecordAgain(); break;
+      case "confirm": await this.handleConfirm(); break;
     }
-    return null;
   }
 
-  isMouseInsideButton(btn) {
-    return mouseX >= btn.x && mouseX <= btn.x + btn.width && mouseY >= btn.y && mouseY <= btn.y + btn.height;
-  }
+  /* ─────────────────────────────────────────────
+   * BUTTON HANDLERS
+   * ───────────────────────────────────────────── */
 
-  async handleButtonClick(buttonId) {
-    if (buttonId === "record") await this.handleRecordButton();
-    else if (buttonId === "preview") await this.handlePreviewButton();
-    else if (buttonId === "recordAgain") this.handleRecordAgainButton();
-    else if (buttonId === "confirm") await this.handleConfirmButton();
-  }
+  async handleRecord() {
+    // Toggle: if already recording, stop
+    if (this.isRecording) {
+      this.stopRecording();
+      return;
+    }
 
-  getRecordButtonLabel() {
-    return this.isRecording ? "stop record" : "start record";
-  }
-
-  getVisibleRecordingSeconds() {
-    if (this.isRecording) return Math.min(this.app.projectData.recordingDurationSeconds, (Date.now() - this.recordingStartTime) / 1000);
-    if (this.app.projectData.rawAudio) return this.app.projectData.rawAudio.durationSeconds;
-    return 0;
-  }
-
-  getRecordingTimerLabel() {
-    if (this.isRecording) return "recording time";
-    if (this.app.projectData.rawAudio) return "recorded time";
-    return "recording time";
-  }
-
-  /* --------------------------------------------
-   * VOICE LOGIC
-   * -------------------------------------------- */
-
-  async handleRecordButton() {
-    if (this.isRecording) { this.stopRecording(); return; }
+    // Block if audio is mid-processing
     if (this.app.projectData.audioStatus.isProcessing) return;
 
     this.stopPreviewAudio();
     this.clearStatusOverride();
-    this.clearStoredAudioUrls();
+    this.revokeStoredAudioUrls();
     this.app.resetAudioData();
 
-    this.statusMessageOverride = "requesting microphone access";
-
-    try { await this.startRecording(); this.clearStatusOverride(); }
-    catch (err) { this.stopRecordingState(); this.statusMessageOverride = "microphone access did not work"; console.error(err); }
-  }
-
-  async handlePreviewButton() {
-    if (this.isRecording) return;
-    const rawAudio = this.app.projectData.rawAudio;
-    if (!rawAudio) return;
-
-    this.stopPreviewAudio();
-    this.statusMessageOverride = "playing your recorded voice now";
-    this.previewAudioElement = new Audio(rawAudio.url);
-    this.previewAudioElement.onended = () => { this.previewAudioElement = null; this.clearStatusOverride(); };
-
-    try { await this.previewAudioElement.play(); }
-    catch (err) { this.previewAudioElement = null; this.statusMessageOverride = "preview playback could not start"; console.error(err); }
-  }
-
-  handleRecordAgainButton() {
-    if (this.isRecording) return;
-    this.stopPreviewAudio();
-    this.clearStatusOverride();
-    this.clearStoredAudioUrls();
-    this.app.resetAudioData();
-    this.refreshVoiceScreen();
-  }
-
-  async handleConfirmButton() {
-    if (this.isRecording || this.app.projectData.audioStatus.isProcessing) return;
-    const rawAudio = this.app.projectData.rawAudio;
-    if (!rawAudio) return;
-
-    this.stopPreviewAudio();
-    this.clearStatusOverride();
-    this.app.setAudioProcessingState(true);
+    this.setStatus("requesting microphone access...");
 
     try {
-      const filtered = await this.createFilteredAudioData(rawAudio);
-      if (this.app.projectData.filteredAudio) this.revokeAudioUrl(this.app.projectData.filteredAudio.url);
-      this.app.saveFilteredAudio(filtered);
+      await this.startRecording();
       this.clearStatusOverride();
-      this.app.setScreen("reveal");
-    }
-    catch (err) {
-      this.app.setAudioProcessingState(false);
-      this.statusMessageOverride = "your audio could not be processed";
+    } catch (err) {
+      this.stopRecordingState();
+      this.setStatus("microphone access was denied or unavailable");
       console.error(err);
     }
   }
 
-  /* --------------------------------------------
-   * RECORDING / AUDIO HELPERS
-   * -------------------------------------------- */
+  async handlePreview() {
+    if (this.isRecording) return;
+
+    const raw = this.app.projectData.rawAudio;
+    if (!raw) return;
+
+    this.stopPreviewAudio();
+    this.setStatus("playing your recorded voice...");
+
+    this.previewAudio = new Audio(raw.url);
+    this.previewAudio.onended = () => {
+      this.previewAudio = null;
+      this.clearStatusOverride();
+    };
+
+    try {
+      await this.previewAudio.play();
+    } catch (err) {
+      this.previewAudio = null;
+      this.setStatus("preview playback could not start");
+      console.error(err);
+    }
+  }
+
+  handleRecordAgain() {
+    if (this.isRecording) return;
+    this.stopPreviewAudio();
+    this.clearStatusOverride();
+    this.revokeStoredAudioUrls();
+    this.app.resetAudioData();
+    this.refresh();
+  }
+
+  async handleConfirm() {
+    if (this.isRecording || this.app.projectData.audioStatus.isProcessing) return;
+
+    const raw = this.app.projectData.rawAudio;
+    if (!raw) return;
+
+    this.stopPreviewAudio();
+    this.clearStatusOverride();
+    this.app.setAudioProcessingState(true);
+    this.setStatus("processing your audio...");
+
+    try {
+      const filtered = await this.applyRobotFilter(raw);
+
+      // Revoke old filtered URL if one exists
+      if (this.app.projectData.filteredAudio) {
+        this.revokeUrl(this.app.projectData.filteredAudio.url);
+      }
+
+      this.app.saveFilteredAudio(filtered);
+      this.clearStatusOverride();
+      this.app.setScreen("reveal");
+    } catch (err) {
+      this.app.setAudioProcessingState(false);
+      this.setStatus("audio could not be processed — please try recording again");
+      console.error(err);
+    }
+  }
+
+  /* ─────────────────────────────────────────────
+   * RECORDING
+   * ───────────────────────────────────────────── */
 
   async startRecording() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("media devices not available");
+    if (!navigator.mediaDevices?.getUserMedia) {
+      throw new Error("mediaDevices.getUserMedia is not available in this browser");
+    }
 
+    // p5.js sound library sometimes requires this before audio can run
     if (typeof userStartAudio === "function") await userStartAudio();
 
     this.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mimeType = this.getSupportedRecordingMimeType() || undefined;
-    this.recordedAudioChunks = [];
-    this.mediaRecorder = new MediaRecorder(this.mediaStream, mimeType ? { mimeType } : undefined);
 
-    this.mediaRecorder.ondataavailable = e => { if (e.data.size > 0) this.recordedAudioChunks.push(e.data); };
-    this.mediaRecorder.onstop = () => { this.finishRecording(); };
+    const mimeType = this.getBestMimeType();
+    this.audioChunks = [];
+    this.mediaRecorder = new MediaRecorder(
+      this.mediaStream,
+      mimeType ? { mimeType } : undefined
+    );
+
+    this.mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) this.audioChunks.push(e.data);
+    };
+
+    this.mediaRecorder.onstop = () => this.finishRecording();
 
     this.recordingStartTime = Date.now();
+    this.isRecording = true;
     this.mediaRecorder.start();
 
-    this.isRecording = true;
-    this.recordingTimeoutId = setTimeout(() => this.stopRecording(), this.app.projectData.recordingDurationSeconds * 1000);
+    // Auto-stop after the max duration
+    const maxMs = this.app.projectData.recordingDurationSeconds * 1000;
+    this.recordingTimeoutId = setTimeout(() => this.stopRecording(), maxMs);
   }
 
   stopRecording() {
@@ -326,165 +377,224 @@ class VoiceScreen extends Screen {
   }
 
   finishRecording() {
-    if (this.recordedAudioChunks.length === 0) { this.stopRecordingState(); this.statusMessageOverride = "no audio was captured"; return; }
+    if (this.audioChunks.length === 0) {
+      this.stopRecordingState();
+      this.setStatus("no audio was captured — please try again");
+      return;
+    }
 
-    const duration = Math.min(this.app.projectData.recordingDurationSeconds, (Date.now() - this.recordingStartTime) / 1000);
-    const blob = new Blob(this.recordedAudioChunks, { type: this.mediaRecorder.mimeType || "audio/webm" });
+    const duration = Math.min(
+      this.app.projectData.recordingDurationSeconds,
+      (Date.now() - this.recordingStartTime) / 1000
+    );
+
+    const mimeType = this.mediaRecorder.mimeType || "audio/webm";
+    const blob = new Blob(this.audioChunks, { type: mimeType });
     const url = URL.createObjectURL(blob);
 
-    this.app.saveRawAudio({ blob, url, mimeType: this.mediaRecorder.mimeType || "audio/webm", durationSeconds: duration });
-
+    this.app.saveRawAudio({ blob, url, mimeType, durationSeconds: duration });
     this.stopRecordingState();
     this.clearStatusOverride();
-    this.refreshVoiceScreen();
+    this.refresh();
   }
 
   stopRecordingState() {
     this.isRecording = false;
-    this.recordedAudioChunks = [];
+    this.audioChunks = [];
     this.recordingStartTime = 0;
 
-    if (this.recordingTimeoutId) { clearTimeout(this.recordingTimeoutId); this.recordingTimeoutId = null; }
-    if (this.mediaStream) { this.mediaStream.getTracks().forEach(t => t.stop()); this.mediaStream = null; }
+    if (this.recordingTimeoutId) {
+      clearTimeout(this.recordingTimeoutId);
+      this.recordingTimeoutId = null;
+    }
+
+    if (this.mediaStream) {
+      this.mediaStream.getTracks().forEach(t => t.stop());
+      this.mediaStream = null;
+    }
+
     this.mediaRecorder = null;
   }
 
-  getSupportedRecordingMimeType() {
-    if (!MediaRecorder || !MediaRecorder.isTypeSupported) return "";
-    const types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
-    for (const t of types) if (MediaRecorder.isTypeSupported(t)) return t;
-    return "";
+  getBestMimeType() {
+    if (!window.MediaRecorder?.isTypeSupported) return "";
+    const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
+    return candidates.find(t => MediaRecorder.isTypeSupported(t)) || "";
   }
 
-  /* --------------------------------------------
-   * AUDIO PROCESSING
-   * -------------------------------------------- */
+  /* ─────────────────────────────────────────────
+   * AUDIO PROCESSING  (bitcrush + static filter)
+   * ───────────────────────────────────────────── */
 
-  async createFilteredAudioData(rawAudioData) {
-    const arrayBuffer = await rawAudioData.blob.arrayBuffer();
-    const ctx = this.getProcessingAudioContext();
+  async applyRobotFilter(rawAudio) {
+    const arrayBuffer = await rawAudio.blob.arrayBuffer();
+    const ctx = this.getAudioContext();
     const decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
-    const filtered = this.createBitcrushedAudioBuffer(decoded);
-    const blob = this.convertAudioBufferToWaveBlob(filtered);
+    const filtered = this.bitcrush(decoded);
+    const blob = this.encodeToWav(filtered);
     const url = URL.createObjectURL(blob);
 
-    return { blob, url, mimeType: "audio/wav", durationSeconds: rawAudioData.durationSeconds, filterType: "bitcrushStatic" };
+    return {
+      blob,
+      url,
+      mimeType: "audio/wav",
+      durationSeconds: rawAudio.durationSeconds,
+      filterType: "bitcrushStatic"
+    };
   }
 
-  getProcessingAudioContext() {
-    if (this.processingAudioContext) return this.processingAudioContext;
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContextClass) throw new Error("audio context not available");
-    this.processingAudioContext = new AudioContextClass();
-    return this.processingAudioContext;
+  getAudioContext() {
+    if (this.audioContext) return this.audioContext;
+
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) throw new Error("Web Audio API is not available in this browser");
+
+    this.audioContext = new Ctx();
+    return this.audioContext;
   }
 
-  createBitcrushedAudioBuffer(srcBuffer) {
-    const ch = srcBuffer.numberOfChannels;
-    const len = srcBuffer.length;
-    const sr = srcBuffer.sampleRate;
-    const outBuffer = this.getProcessingAudioContext().createBuffer(ch, len, sr);
+  bitcrush(srcBuffer) {
+    const channels = srcBuffer.numberOfChannels;
+    const length = srcBuffer.length;
+    const sampleRate = srcBuffer.sampleRate;
+    const outBuffer = this.getAudioContext().createBuffer(channels, length, sampleRate);
 
-    const bitDepth = 5;
-    const holdSamples = 6;
-    const quantizeSteps = Math.pow(2, bitDepth - 1);
-    const staticAmt = 0.02;
+    const BIT_DEPTH = 5;
+    const HOLD_SAMPLES = 6;
+    const STATIC_AMT = 0.02;
+    const steps = Math.pow(2, BIT_DEPTH - 1);
 
-    for (let c = 0; c < ch; c++) {
+    for (let c = 0; c < channels; c++) {
       const src = srcBuffer.getChannelData(c);
       const dst = outBuffer.getChannelData(c);
       let held = 0;
-      for (let i = 0; i < len; i++) {
-        const val = src[i];
-        if (i % holdSamples === 0) held = Math.round(val * quantizeSteps) / quantizeSteps;
-        dst[i] = Math.max(-1, Math.min(1, held * 0.92 + (Math.random() * 2 - 1) * staticAmt));
+
+      for (let i = 0; i < length; i++) {
+        if (i % HOLD_SAMPLES === 0) {
+          held = Math.round(src[i] * steps) / steps;
+        }
+        const noise = (Math.random() * 2 - 1) * STATIC_AMT;
+        dst[i] = Math.max(-1, Math.min(1, held * 0.92 + noise));
       }
     }
 
     return outBuffer;
   }
 
-  convertAudioBufferToWaveBlob(audioBuffer) {
-    const ch = audioBuffer.numberOfChannels, len = audioBuffer.length, sr = audioBuffer.sampleRate;
-    const bytesPerSample = 2, blockAlign = ch * bytesPerSample, dataSize = len * blockAlign;
+  encodeToWav(audioBuffer) {
+    const channels = audioBuffer.numberOfChannels;
+    const length = audioBuffer.length;
+    const sampleRate = audioBuffer.sampleRate;
+    const bytesPerSample = 2;
+    const blockAlign = channels * bytesPerSample;
+    const dataSize = length * blockAlign;
+
     const buffer = new ArrayBuffer(44 + dataSize);
     const view = new DataView(buffer);
-    const interleaved = this.createInterleavedSampleData(audioBuffer);
-    let idx = 0;
+    const pcm = this.interleave(audioBuffer);
+    let offset = 0;
 
-    idx = this.writeWaveText(view, idx, "RIFF");
-    view.setUint32(idx, 36 + dataSize, true); idx += 4;
-    idx = this.writeWaveText(view, idx, "WAVE");
-    idx = this.writeWaveText(view, idx, "fmt ");
-    view.setUint32(idx, 16, true); idx += 4;
-    view.setUint16(idx, 1, true); idx += 2;
-    view.setUint16(idx, ch, true); idx += 2;
-    view.setUint32(idx, sr, true); idx += 4;
-    view.setUint32(idx, sr * blockAlign, true); idx += 4;
-    view.setUint16(idx, blockAlign, true); idx += 2;
-    view.setUint16(idx, bytesPerSample * 8, true); idx += 2;
-    idx = this.writeWaveText(view, idx, "data");
-    view.setUint32(idx, dataSize, true); idx += 4;
+    // WAV header
+    offset = this.writeStr(view, offset, "RIFF");
+    view.setUint32(offset, 36 + dataSize, true); offset += 4;
+    offset = this.writeStr(view, offset, "WAVE");
+    offset = this.writeStr(view, offset, "fmt ");
+    view.setUint32(offset, 16, true); offset += 4; // PCM chunk size
+    view.setUint16(offset, 1, true); offset += 2; // PCM format
+    view.setUint16(offset, channels, true); offset += 2;
+    view.setUint32(offset, sampleRate, true); offset += 4;
+    view.setUint32(offset, sampleRate * blockAlign, true); offset += 4;
+    view.setUint16(offset, blockAlign, true); offset += 2;
+    view.setUint16(offset, bytesPerSample * 8, true); offset += 2;
+    offset = this.writeStr(view, offset, "data");
+    view.setUint32(offset, dataSize, true); offset += 4;
 
-    interleaved.forEach(v => {
+    // PCM samples
+    pcm.forEach(v => {
       const clamped = Math.max(-1, Math.min(1, v));
-      const pcm = clamped < 0 ? clamped * 32768 : clamped * 32767;
-      view.setInt16(idx, pcm, true); idx += 2;
+      const pcmVal = clamped < 0 ? clamped * 32768 : clamped * 32767;
+      view.setInt16(offset, pcmVal, true);
+      offset += 2;
     });
 
     return new Blob([buffer], { type: "audio/wav" });
   }
 
-  createInterleavedSampleData(audioBuffer) {
-    const ch = audioBuffer.numberOfChannels, len = audioBuffer.length;
-    const interleaved = new Float32Array(len * ch);
+  interleave(audioBuffer) {
+    const channels = audioBuffer.numberOfChannels;
+    const length = audioBuffer.length;
+    const result = new Float32Array(length * channels);
     let idx = 0;
-    for (let i = 0; i < len; i++) for (let c = 0; c < ch; c++) interleaved[idx++] = audioBuffer.getChannelData(c)[i];
-    return interleaved;
+
+    for (let i = 0; i < length; i++) {
+      for (let c = 0; c < channels; c++) {
+        result[idx++] = audioBuffer.getChannelData(c)[i];
+      }
+    }
+
+    return result;
   }
 
-  writeWaveText(view, start, text) {
-    let idx = start;
-    for (let i = 0; i < text.length; i++) view.setUint8(idx++, text.charCodeAt(i));
-    return idx;
+  writeStr(view, offset, str) {
+    for (let i = 0; i < str.length; i++) {
+      view.setUint8(offset++, str.charCodeAt(i));
+    }
+    return offset;
   }
 
-  /* --------------------------------------------
-   * MISC
-   * -------------------------------------------- */
+  /* ─────────────────────────────────────────────
+   * HELPERS
+   * ───────────────────────────────────────────── */
 
   stopPreviewAudio() {
-    if (!this.previewAudioElement) return;
-    this.previewAudioElement.pause();
-    this.previewAudioElement.currentTime = 0;
-    this.previewAudioElement = null;
+    if (!this.previewAudio) return;
+    this.previewAudio.pause();
+    this.previewAudio.currentTime = 0;
+    this.previewAudio = null;
   }
 
-  clearStoredAudioUrls() {
-    if (this.app.projectData.rawAudio) this.revokeAudioUrl(this.app.projectData.rawAudio.url);
-    if (this.app.projectData.filteredAudio) this.revokeAudioUrl(this.app.projectData.filteredAudio.url);
+  revokeStoredAudioUrls() {
+    if (this.app.projectData.rawAudio) this.revokeUrl(this.app.projectData.rawAudio.url);
+    if (this.app.projectData.filteredAudio) this.revokeUrl(this.app.projectData.filteredAudio.url);
   }
 
-  revokeAudioUrl(url) {
-    if (typeof url !== "string" || url.length === 0) return;
-    URL.revokeObjectURL(url);
+  revokeUrl(url) {
+    if (typeof url === "string" && url.length > 0) URL.revokeObjectURL(url);
+  }
+
+  setStatus(msg) {
+    this.statusOverride = msg;
   }
 
   clearStatusOverride() {
-    this.statusMessageOverride = null;
+    this.statusOverride = null;
   }
 
-  getSelectedRobotLabel() {
+  getVisibleSeconds() {
+    if (this.isRecording) {
+      return Math.min(
+        this.app.projectData.recordingDurationSeconds,
+        (Date.now() - this.recordingStartTime) / 1000
+      );
+    }
+    return this.app.projectData.rawAudio?.durationSeconds ?? 0;
+  }
+
+  getTimerLabel() {
+    if (this.isRecording) return "recording time";
+    if (this.app.projectData.rawAudio) return "recorded time";
+    return "recording time";
+  }
+
+  getRobotLabel() {
     const type = this.app.projectData.selectedRobotType;
     if (!type || !this.app.robotsData) return "not selected yet";
-    const robot = this.app.robotsData.robotTypes.find(r => r.id === type);
-    return robot?.label || "not selected yet";
+    return this.app.robotsData.robotTypes.find(r => r.id === type)?.label ?? "not selected yet";
   }
 
-  getSelectedColorLabel() {
-    const color = this.app.projectData.selectedColor;
-    if (!color || !this.app.robotsData) return "not selected yet";
-    const c = this.app.robotsData.colors.find(c => c.id === color);
-    return c?.label || "not selected yet";
+  getColorLabel() {
+    const colorId = this.app.projectData.selectedColor;
+    if (!colorId || !this.app.robotsData) return "not selected yet";
+    return this.app.robotsData.colors.find(c => c.id === colorId)?.label ?? "not selected yet";
   }
 }
