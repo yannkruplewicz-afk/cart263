@@ -1,0 +1,114 @@
+:root {
+  --menu-background: #fbf1ef;
+  --menu-glow-red: rgba(248, 214, 221, 0.72);
+  --menu-glow-blue: rgba(211, 229, 255, 0.58);
+  --menu-panel: #fff9f7;
+  --menu-panel-shadow: rgba(255, 255, 255, 0.35);
+  --menu-panel-accent: #ffd8d3;
+  --menu-popup: #fff8f5;
+  --menu-text: #2b2d42;
+  --menu-subtitle: #6e7285;
+  --menu-button-blue: #d3e5ff;
+  --menu-button-blue-hover: #c2dbff;
+  --menu-button-green: #d6f4e6;
+  --menu-button-green-hover: #c3e8d6;
+  --menu-consent-card: #eef4ff;
+  --menu-title-font: "Trebuchet MS";
+  --menu-panel-radius: 28;
+  --menu-popup-radius: 24;
+  --menu-button-radius: 14;
+  --menu-close-radius: 10;
+  --menu-checkbox-radius: 6;
+  --menu-stroke-weight: 2;
+  --menu-layout-scale: 1;
+  --menu-popup-scale: 1;
+  --menu-title-size: 80;
+  --menu-subtitle-size: 24;
+  --menu-guide-title-size: 34;
+  --menu-body-size: 18;
+  --menu-small-size: 15;
+  --menu-card-height: 352;
+  --menu-guide-button-bottom-gap: 36;
+  --menu-consent-size: 14;
+  --question-background: #fbf2ef;
+  --question-glow-red: rgba(248, 214, 221, 0.6);
+  --question-glow-blue: rgba(211, 229, 255, 0.5);
+  --question-panel: #fff9f7;
+  --question-panel-shadow: rgba(255, 255, 255, 0.35);
+  --question-panel-accent: #ffd8d3;
+  --question-text: #2b2d42;
+  --question-subtitle: #6e7285;
+  --question-progress-fill: #eef4ff;
+  --question-option-fill: #fff6f3;
+  --question-option-hover: #e3f1ff;
+  --question-option-selected: #dbeeff;
+  --question-option-stroke: #2b2d42;
+  --question-back-fill: #ffe2dd;
+  --question-back-hover: #ffd4cd;
+  --question-next-fill: #d6f4e6;
+  --question-next-hover: #c3e8d6;
+  --question-panel-radius: 28;
+  --question-option-radius: 16;
+  --question-option-height: 84;
+  --question-option-text-size: 16;
+  --question-option-text-leading: 20;
+  --question-nav-radius: 14;
+  --question-stroke-weight: 2;
+  --question-title-size: 30;
+  --question-body-size: 18;
+  --question-progress-size: 16;
+  --voice-background: #fbf2ef;
+  --voice-glow-red: rgba(248, 214, 221, 0.6);
+  --voice-glow-blue: rgba(211, 229, 255, 0.5);
+  --voice-panel: #fff9f7;
+  --voice-panel-shadow: rgba(255, 255, 255, 0.35);
+  --voice-panel-accent: #d6f4e6;
+  --voice-text: #2b2d42;
+  --voice-subtitle: #6e7285;
+  --voice-button-primary: #d6f4e6;
+  --voice-button-primary-hover: #c3e8d6;
+  --voice-button-secondary: #e3f1ff;
+  --voice-button-secondary-hover: #d3e7fb;
+  --voice-button-danger: #ffe2dd;
+  --voice-button-danger-hover: #ffd4cd;
+  --voice-timer-track: #eef4ff;
+  --voice-timer-fill: #9ed8ff;
+  --voice-panel-radius: 28;
+  --voice-button-radius: 14;
+  --voice-stroke-weight: 2;
+  --voice-title-size: 30;
+  --voice-body-size: 18;
+  --voice-small-size: 16;
+  --reveal-text: #2b2d42;
+  --reveal-subtitle: #6e7285;
+  --reveal-button-fill: #d6f4e6;
+  --reveal-button-hover: #c3e8d6;
+  --reveal-button-secondary-fill: #e3f1ff;
+  --reveal-button-secondary-hover: #d3e7fb;
+  --reveal-button-radius: 14;
+  --reveal-stroke-weight: 2;
+  --reveal-description-size: 24;
+  --reveal-body-size: 20;
+  --reveal-message-size: 18;
+  --reveal-message-leading: 24;
+  --reveal-hint-size: 20;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  background: #000000;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+canvas {
+  display: block;
+}

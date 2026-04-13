@@ -1,0 +1,201 @@
+{
+  "scoredQuestions": [
+    {
+      "id": "question-1-main-purpose",
+      "text": "What do you want your robot to do most?",
+      "points": 3,
+      "scored": true,
+      "options": [
+        {
+          "id": "q1-companion",
+          "text": "keep me company and understand me",
+          "robotTypeId": "companion"
+        },
+        {
+          "id": "q1-domestic",
+          "text": "help with chores and daily routines",
+          "robotTypeId": "domestic"
+        },
+        {
+          "id": "q1-security",
+          "text": "keep me safe and watch over things",
+          "robotTypeId": "security"
+        },
+        {
+          "id": "q1-social",
+          "text": "talk with people and make things more social",
+          "robotTypeId": "social"
+        },
+        {
+          "id": "q1-utility",
+          "text": "help me get useful tasks done",
+          "robotTypeId": "utility"
+        }
+      ]
+    },
+    {
+      "id": "question-2-connection-style",
+      "text": "What kind of connection do you want with your robot?",
+      "points": 2,
+      "scored": true,
+      "options": [
+        {
+          "id": "q2-companion",
+          "text": "a close and caring buddy",
+          "robotTypeId": "companion"
+        },
+        {
+          "id": "q2-domestic",
+          "text": "a dependable helper at home",
+          "robotTypeId": "domestic"
+        },
+        {
+          "id": "q2-security",
+          "text": "a protective guard i can rely on",
+          "robotTypeId": "security"
+        },
+        {
+          "id": "q2-social",
+          "text": "an outgoing robot that engages with people",
+          "robotTypeId": "social"
+        },
+        {
+          "id": "q2-utility",
+          "text": "a practical assistant focused on results",
+          "robotTypeId": "utility"
+        }
+      ]
+    },
+    {
+      "id": "question-3-behaviour-style",
+      "text": "How should your robot act most of the time?",
+      "points": 2,
+      "scored": true,
+      "options": [
+        {
+          "id": "q3-companion",
+          "text": "warm and comforting",
+          "robotTypeId": "companion"
+        },
+        {
+          "id": "q3-domestic",
+          "text": "calm and organised",
+          "robotTypeId": "domestic"
+        },
+        {
+          "id": "q3-security",
+          "text": "alert and watchful",
+          "robotTypeId": "security"
+        },
+        {
+          "id": "q3-social",
+          "text": "expressive and talkative",
+          "robotTypeId": "social"
+        },
+        {
+          "id": "q3-utility",
+          "text": "efficient and solution-focused",
+          "robotTypeId": "utility"
+        }
+      ]
+    },
+    {
+      "id": "question-4-environment",
+      "text": "Where would your robot fit best?",
+      "points": 1,
+      "scored": true,
+      "options": [
+        {
+          "id": "q4-companion",
+          "text": "by my side in my personal space",
+          "robotTypeId": "companion"
+        },
+        {
+          "id": "q4-domestic",
+          "text": "around the house helping every day",
+          "robotTypeId": "domestic"
+        },
+        {
+          "id": "q4-security",
+          "text": "in places that need protection",
+          "robotTypeId": "security"
+        },
+        {
+          "id": "q4-social",
+          "text": "in shared spaces around other people",
+          "robotTypeId": "social"
+        },
+        {
+          "id": "q4-utility",
+          "text": "wherever there is work to do",
+          "robotTypeId": "utility"
+        }
+      ]
+    },
+    {
+      "id": "question-5-core-strength",
+      "text": "What should your robot be best at when it really matters?",
+      "points": 1,
+      "scored": true,
+      "options": [
+        {
+          "id": "q5-companion",
+          "text": "supporting me emotionally",
+          "robotTypeId": "companion"
+        },
+        {
+          "id": "q5-domestic",
+          "text": "making home life easier",
+          "robotTypeId": "domestic"
+        },
+        {
+          "id": "q5-security",
+          "text": "preventing problems and spotting danger",
+          "robotTypeId": "security"
+        },
+        {
+          "id": "q5-social",
+          "text": "communicating and connecting with people",
+          "robotTypeId": "social"
+        },
+        {
+          "id": "q5-utility",
+          "text": "handling practical tasks and solving problems",
+          "robotTypeId": "utility"
+        }
+      ]
+    }
+  ],
+  "colourQuestion": {
+    "id": "colour-choice",
+    "text": "What colour do you want your robot to be?",
+    "scored": false,
+    "options": [
+      {
+        "id": "colour-white",
+        "text": "white",
+        "colourId": "white"
+      },
+      {
+        "id": "colour-red",
+        "text": "red",
+        "colourId": "red"
+      },
+      {
+        "id": "colour-green",
+        "text": "green",
+        "colourId": "green"
+      },
+      {
+        "id": "colour-blue",
+        "text": "blue",
+        "colourId": "blue"
+      },
+      {
+        "id": "colour-black",
+        "text": "black",
+        "colourId": "black"
+      }
+    ]
+  }
+}
