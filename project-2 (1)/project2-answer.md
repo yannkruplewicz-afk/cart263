@@ -28,6 +28,10 @@ The difficulty might then have been to dispose them as best as possible so that 
 
 
 
+
+
+
+
 2nd review
 
 https://scarlett253.github.io/263_p2_ys/
@@ -59,6 +63,13 @@ function teleportHidden(hiddenPlayer, player) {
 }
 
 Here, the character takes a random position, makes sure it is not too close to the player ( distance < 4) and moves the character hidden there. So i realize that i was actually wrong since the beginning and that this program is tricky. The character is automatically going to respawn at the same interval of seconds at a place located a bit far from the player, there's actually no mouseX or mouseY function involved there, it is only calculated and randomised.
+
+
+
+
+
+
+
 
 
 
